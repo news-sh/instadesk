@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+
+    <key>CFBundleDisplayName</key>
+    <string>InstaDesk</string>
+
+    <key>CFBundleExecutable</key>
+    <string>InstaDesk</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>com.yourname.instadesk</string>
+
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>CFBundleName</key>
+    <string>InstaDesk</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
+    <!-- iPhone 6s / iOS 15.8.8 target -->
+    <key>MinimumOSVersion</key>
+    <string>15.0</string>
+
+    <key>UIDeviceFamily</key>
+    <array>
+        <integer>1</integer>
+    </array>
+
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- An empty UILaunchScreen dict is valid and gives a plain launch
+         image. The previous version had <key>UIColorName</key> with an
+         EMPTY string value, which is invalid and can make SpringBoard
+         reject the app at launch. -->
+    <key>UILaunchScreen</key>
+    <dict/>
+
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>arm64</string>
+    </array>
+
+    <!-- Permission strings: required or the app is killed on first
+         camera/mic access. -->
+    <key>NSFaceIDUsageDescription</key>
+    <string>InstaDesk uses Touch ID or Face ID to confirm it is you before answering an Instagram call.</string>
+
+    <key>NSCameraUsageDescription</key>
+    <string>InstaDesk needs camera access for Instagram video calls.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>InstaDesk needs microphone access for Instagram voice and video calls.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>InstaDesk needs photo access to upload images to Instagram.</string>
+
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>InstaDesk saves downloaded media to your photo library.</string>
+
+    <!-- Background audio only. The previous version also declared "voip",
+         which iOS only permits for apps that actually register a PushKit
+         VoIP token; a sideloaded app that declares it without doing so
+         gets terminated. That was a crash cause. -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+        <string>fetch</string>
+        <string>processing</string>
+    </array>
+
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+    </dict>
+
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+</dict>
+</plist>
