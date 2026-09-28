@@ -1,0 +1,42 @@
+name: Build AI Hub IPA
+
+on:
+  # No `paths:` filter here on purpose. The rebuild flow for this project is
+  # `rm -rf InstaDesk` -> regenerate -> `git init` -> force-push, which gives
+  # GitHub a brand-new history with no common ancestor. Path filters cannot be
+  # evaluated against that, so the workflow was being skipped entirely.
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+          swift --version
+
+      - name: Build unsigned IPA
+        run: |
+          cd AIHub
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Verify output
+        run: |
+          ls -la AIHub/build/
+          unzip -l AIHub/build/AIHub.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: AIHub-ipa
+          path: AIHub/build/AIHub.ipa
+          retention-days: 90

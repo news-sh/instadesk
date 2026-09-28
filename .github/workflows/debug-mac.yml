@@ -1,0 +1,74 @@
+### Debug shell on the macOS build runner
+#
+# Manual only. This starts the normal InstaDesk build, then opens a tmate
+# SSH session so you can poke at the real macOS toolchain when a build fails
+# in a way the logs do not explain.
+#
+# Intended use: debugging THIS project's build. GitHub Actions is not a free
+# Mac -- long idle sessions on macOS runners (10x minute multiplier) are what
+# gets accounts flagged. Keep sessions short and cancel the run when done.
+
+name: Debug shell (macOS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_first:
+        description: "Run the build before opening the shell"
+        type: boolean
+        default: true
+      minutes:
+        description: "Auto-stop after this many minutes (max 350)"
+        default: "30"
+
+jobs:
+  debug:
+    runs-on: macos-latest
+    # Hard ceiling so a forgotten session cannot burn the whole quota.
+    timeout-minutes: 355
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+          echo "SDKs:"; xcodebuild -showsdks | grep -i iphoneos || true
+
+      - name: Build InstaDesk
+        if: ${{ inputs.build_first }}
+        continue-on-error: true
+        run: |
+          chmod +x build.sh
+          ./build.sh 2>&1 | tee /tmp/build.log
+
+      - name: Build log tail
+        if: ${{ inputs.build_first }}
+        run: tail -60 /tmp/build.log || echo "no build log"
+
+      - name: Arm the auto-stop
+        run: |
+          MINS="${{ inputs.minutes }}"
+          case "$MINS" in ''|*[!0-9]*) MINS=30 ;; esac
+          [ "$MINS" -gt 350 ] && MINS=350
+          echo "Session will self-terminate after ${MINS} minutes."
+          ( sleep $((MINS * 60)); echo "Time limit reached."; pkill -f tmate || true ) &
+
+      - name: Open SSH session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          # Only the account that launched the run may connect.
+          limit-access-to-actor: true
+
+      # After you disconnect (or run `touch /continue` in the shell) the job
+      # finishes and the artifact is uploaded as usual.
+      - name: Upload IPA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: InstaDesk-ipa-debug
+          path: build/*.ipa
+          if-no-files-found: ignore
+          retention-days: 7
